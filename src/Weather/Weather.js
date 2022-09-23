@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
+import DailyWeather from './DailyWeather';
+
 function Weather() {
 
     const [weatherData, setWeatherData] = useState()
@@ -13,13 +15,28 @@ function Weather() {
         fetch(API)
         .then(res => res.json())
         .then(data => {
-            console.log(data);
+            setWeatherData(data)
         })
+        .catch(err => console.log(err))
     }, [])
+
+    if(weatherData) console.log(weatherData);
 
   return (
     <div>
         <h1>Weather</h1>
+        {weatherData ? 
+            weatherData.daily.slice(0, 5).map((day, i) => {
+                return <DailyWeather key={i} 
+                    dateNum={day.dt}
+                    dayIcon={`http://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`}
+                    tempHigh={day.temp.max}
+                    tempLow={day.temp.min}
+                    />
+            })
+        : <h2>Loading...</h2>
+        }
+        
     </div>
   )
 }
